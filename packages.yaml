@@ -4,7 +4,6 @@ axis:
   - mpi
   - lapack
   - python
-
 combinations:
   core:
     architecture:
@@ -17,26 +16,26 @@ combinations:
   gnu:
     architecture:
       - 'linux-rhel6-x86_64'
-    compiler: 'gcc-5.3.0'
+    compiler: 'gcc@5.3.0'
     mpi:
-      - 'openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm:mvapich2@2.2b+psm+slurm:mvapich2@2.2~cuda fabrics=psm process_managers=slurm threads=multiple'
+      - 'openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm:mvapich2@2.2b+slurm:mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple'
     lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
     python: 'python@3.5.2:python@2.7.13'
   intel:
     architecture: 'linux-rhel6-x86_64'
-    compiler: 'intel@17.0.0.1'
+    compiler: 'intel@17.0.0'
     mpi: 'intel-mpi@2017.3.196'
-    lapack: 'mkl'
+    lapack: 'intel-mkl'
     python: 'python@3.5.2:python@2.7.13'
   pgi:
     architecture: 'linux-rhel6-x86_64'
-    compiler: 'pgi@17.7'
+    compiler: 'pgi@17.4'
     mpi: 'mpich@3.2+hydra+pmi+romio~verbs'
     lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
     python: 'python@3.5.2:python@2.7.13'
   llvm:
     architecture: 'linux-rhel6-x86_64'
-    compiler: 'llvm@4.0.1'
+    compiler: 'clang@4.0.1'
     mpi: 'mpich@3.2+hydra+pmi+romio~verbs'
     lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
     python: 'python@3.5.2:python@2.7.13'
@@ -46,7 +45,6 @@ combinations:
     mpi: None
     lapack: 'openblas@0.2.20~openmp'
     python: 'python@3.5.2:python@2.7.13'
-
 packages:
   core:
     target_matrix:
@@ -120,8 +118,19 @@ packages:
       - architecture
       - compiler
     specs:
-      - openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm
-      - mvapich2@2.2~cuda fabrics=psm process_managers=slurm threads=multiple
+      - openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm ^hwloc%gcc
+      - mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple ^libpciaccess%gcc
+      - mpich@3.2+hydra+pmi+romio~verbs
+      - intel-mpi@2017.3.196
+  'mpi::libs::pgi':
+    target_matrix:
+      - pgi
+    requires:
+      - architecture
+      - compiler
+    specs:
+      - openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm  ^hwloc%gcc
+      - mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple ^libpciaccess%gcc
       - mpich@3.2+hydra+pmi+romio~verbs
       - intel-mpi@2017.3.196
   'mpi::gnu::intel::pgi':
@@ -193,7 +202,7 @@ packages:
       - gnu
       - intel
     target_filter:
-      lapack: ['openblas@0.2.20+openmp', 'mkl']
+      lapack: ['openblas@0.2.20+openmp', 'intel-mkl']
     requires:
       - architecture
       - compiler
