@@ -8,38 +8,44 @@ axis:
 combinations:
   core:
     architecture:
-    - 'x86_E5v1_IntelIB'
-    - 'x86_E5v2_Mellanox_GPU'
+    - 'linux-rhel6-x86_64'
     compiler:
     - 'gcc@4.4.7'
-    - 'gcc@4.8.5'
     mpi: None
     lapack: None
     python: None
   gnu:
     architecture:
-      - 'x86_E5v1_IntelIB'
-      - 'x86_E5v2_Mellanox_GPU'
-      - 'x86_E5v2'
-    compiler: 'gcc@5.3.0'
+      - 'linux-rhel6-x86_64'
+    compiler: 'gcc-5.3.0'
     mpi:
-      - 'openmpi@1.10.2+pmi+psm+slurm+thread_multiple+sqlite3:mvapich2@2.2b+psm+slurm'
-      - 'openmpi@1.10.2+pmi+psm+slurm+thread_multiple+sqlite3:mvapich2@2.2b+nemesisib+slurm'
-      - 'openmpi@1.10.2+pmi~psm+slurm+thread_multiple+sqlite3:mvapich2@2.2b+sock+slurm'
-    lapack: 'openblas@0.2.18~openmp:openblas@0.2.18+openmp'
-    python: 'python@3.5.1:python@2.7.11'
+      - 'openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm:mvapich2@2.2b+psm+slurm:mvapich2@2.2~cuda fabrics=psm process_managers=slurm threads=multiple'
+    lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
+    python: 'python@3.5.2:python@2.7.13'
   intel:
-    architecture: 'x86_E5v1_IntelIB:x86_E5v2_Mellanox_GPU'
-    compiler: 'intel@16.0.3'
-    mpi: 'intelmpi@5.1.3'
+    architecture: 'linux-rhel6-x86_64'
+    compiler: 'intel@17.0.0.1'
+    mpi: 'intel-mpi@2017.3.196'
     lapack: 'mkl'
-    python: 'python@3.5.1:python@2.7.11'
+    python: 'python@3.5.2:python@2.7.13'
+  pgi:
+    architecture: 'linux-rhel6-x86_64'
+    compiler: 'pgi@17.7'
+    mpi: 'mpich@3.2+hydra+pmi+romio~verbs'
+    lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
+    python: 'python@3.5.2:python@2.7.13'
+  llvm:
+    architecture: 'linux-rhel6-x86_64'
+    compiler: 'llvm@4.0.1'
+    mpi: 'mpich@3.2+hydra+pmi+romio~verbs'
+    lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
+    python: 'python@3.5.2:python@2.7.13'
   gnucuda7:
-    architecture: 'x86_E5v2_Mellanox_GPU'
-    compiler: 'gcc@4.9.3'
+    architecture: 'linux-rhel6-x86_64'
+    compiler: 'gcc@5.3.0'
     mpi: None
-    lapack: 'openblas@0.2.18~openmp'
-    python: 'python@3.5.1:python@2.7.11'
+    lapack: 'openblas@0.2.20~openmp'
+    python: 'python@3.5.2:python@2.7.13'
 
 packages:
   core:
@@ -49,26 +55,11 @@ packages:
       - architecture
       - compiler
     specs:
-      - cmake@3.5.2
-      - m4@1.4.17
-      - autoconf@2.69
-      - automake@1.15
-      - libtool@2.4.6
-      - lmod@6.4.1
-      - gnuplot@5.0.1~wx
-      - git@2.8.1
-      - likwid@4.1.1
-      - totalview@8.15.10-2
-      - scala@2.12.1
-      - spark@2.0.2+hadoop
-  serial_intel_only:
-    target_matrix:
-      - intel
-    requires:
-      - architecture
-      - compiler
-    specs:
-      - abaqus@6.14-1
+      - cmake@3.8.2
+      - cmake@3.1.0
+      - lmod@7.4.11
+      - scala@2.20.6
+      - spark@2.1.0+hadoop
   serial:
     target_matrix:
       - gnu
@@ -77,16 +68,13 @@ packages:
       - architecture
       - compiler
     specs:
-      - valgrind@3.11.0~boost~mpi
-      - gdb@7.11
-      - fftw@3.3.4
-      - gsl@2.1
-      - hdf5@1.8.16+szip
-      - python@3.5.1
-      - python@2.7.11
-      - eigen@3.2.7
-      - tcl@8.6.5
-      - tk@8.6.3^tcl@8.6.5
+      - valgrind@3.12.0~boost~mpi
+      - gdb@7.12.1
+      - gsl@2.3
+      - hdf5@1.8.16+szip~fortran~mpi
+      - hdf5@1.10.1+szip~fortran~mpi
+      - python@3.5.2
+      - python@2.7.13
   'serial::python':
     target_matrix:
       - gnu
@@ -96,13 +84,12 @@ packages:
       - compiler
       - python
     specs:
-      - py-cython@0.23.5
-      - py-pip@8.1.2
-      - py-psycopg2@2.6.2^py-pip@8.1.2
+      - py-cython@0.25.2
+      - py-pip@9.0.1
       - py-sympy@1.0
       - py-ply@3.8
-      - py-virtualenv@15.0.1
-      - py-pytest@3.0.0
+      - py-virtualenv@15.1.0
+      - py-pytest@3.0.7
   'serial::gnu':
     target_matrix:
       - gnu
@@ -111,20 +98,8 @@ packages:
       - compiler
     specs:
       - qt@4.8.6
-  lapack:
-    target_matrix:
-      - gnu
-      - intel
-    requires:
-      - architecture
-      - compiler
-      - lapack
-    specs:
-      - arpack-ng@3.3.0~mpi
-      - R+external-lapack
-      - suite-sparse@4.5.1^metis@5.1.0+real64
-      - plumed@2.2.3~mpi+gsl^gsl@2.1
-  mpi:
+      - qt@5.8.0
+  'mpi::gnu::intel':
     target_matrix:
       - gnu
       - intel
@@ -133,20 +108,34 @@ packages:
       - compiler
       - mpi
     specs:
-      - boost@1.61.0+icu_support+mpi+python^python@2.7.11
-      - hdf5@1.8.16+mpi~cxx+szip
-      - scorep@1.4.2
-  'mpi::lapack':
+      - boost@1.64.0+mpi+python^python@2.7.13
+      - hdf5@1.8.16+mpi~cxx~fortran+szip
+  'mpi::libs::all':
     target_matrix:
       - gnu
       - intel
+      - pgi
+      - llvm
+    requires:
+      - architecture
+      - compiler
+    specs:
+      - openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm
+      - mvapich2@2.2~cuda fabrics=psm process_managers=slurm threads=multiple
+      - mpich@3.2+hydra+pmi+romio~verbs
+      - intel-mpi@2017.3.196
+  'mpi::gnu::intel::pgi':
+    target_matrix:
+      - gnu
+      - intel
+      - pgi
     requires:
       - architecture
       - compiler
       - mpi
-      - lapack
     specs:
-      - arpack-ng@3.3.0+mpi
+      - tau@2.26.3
+      - scorep@3.1
   'mpi::lapack::gnu':
     target_matrix:
       - gnu
@@ -161,50 +150,13 @@ packages:
     target_matrix:
       - gnu
     target_filter:
-      lapack: ['openblas@0.2.18~openmp']
+      lapack: ['openblas@0.2.20~openmp']
     requires:
       - architecture
       - compiler
       - lapack
     specs:
-      - caffe ^hdf5@1.8.16+szip ^opencv+eigen+ipp%gcc@5.3.0 ^py-numpy+blas+lapack
-  'mpi::lapack~openmp::gnu':
-    target_matrix:
-      - gnu
-    target_filter:
-      lapack: ['openblas@0.2.18~openmp']
-    requires:
-      - architecture
-      - compiler
-      - mpi
-      - lapack
-    specs:
-      - mumps@5.0.1+mpi
-  'mpi::lapack+openmp::gnu':
-    target_matrix:
-      - gnu
-    target_filter:
-      lapack: ['openblas@0.2.18+openmp']
-    requires:
-      - architecture
-      - compiler
-      - mpi
-      - lapack
-    specs:
-      - paraview+mpi+osmesa+qt+python@5.1.2
-  'mvapich2::lapack~openmp::gnu':
-    target_matrix:
-      - gnu
-    target_filter:
-      lapack: ['openblas@0.2.18~openmp']
-      mpi: ['mvapich2@2.2b+psm+slurm', 'mvapich2@2.2b+nemesisib+slurm', 'mvapich2@2.2b+sock+slurm']
-    requires:
-      - architecture
-      - compiler
-      - mpi
-      - lapack
-    specs:
-      - nwchem@6.6^netlib-scalapack@2.0.2
+      - caffe ^hdf5@1.8.16+szip ^py-numpy+blas+lapack
   'mpi::lapack::intel':
     target_matrix:
       - intel
@@ -214,24 +166,7 @@ packages:
       - mpi
       - lapack
     specs:
-      - mumps@5.0.1+mpi
-    target_matrix:
-      - gnu
-      - intel
-    target_filter:
-      lapack: ['openblas@0.2.18+openmp', 'mkl']
-    requires:
-      - architecture
-      - compiler
-      - python
-      - lapack
-    specs:
-      - py-numpy+blas+lapack@1.11.0
-      - py-scipy@0.17.0^py-numpy+blas+lapack@1.11.0
-      - py-matplotlib@1.4.3^py-numpy+blas+lapack@1.11.0
-      - py-qutip+f90mc@3.1.0^py-scipy@0.17.0^py-numpy+blas+lapack@1.11.0^py-cython@0.23.5
-      - py-ase+matplotlib+scipy@3.11.0^py-matplotlib@1.4.3^py-numpy+blas+lapack@1.11.0
-      - py-scikit-learn ^ py-scipy@0.17.0^py-numpy+blas+lapack@1.11.0
+      - petsc@3.6.3+boost+double+hdf5+metis+mpi+mumps~superlu-dist~hypre
   cuda7:
     target_matrix:
       - gnucuda7
@@ -240,20 +175,31 @@ packages:
       - compiler
     specs:
       - cuda@7.5.18
-      - tensorflow+cuda
-      - caffe+cuda ^hdf5@1.8.16+szip ^opencv+eigen+ipp ^py-numpy+blas+lapack ^cuda@7.5.18
-  'serial::gnu::nocuda':
+      - cudnn@5.1 ^cuda@7.5.18
+      - cudnn@6.0 ^cuda@7.5.18
+  cuda8:
     target_matrix:
       - gnu
     target_filter:
-      architecture:
-        - 'x86_E5v1_IntelIB'
-        - 'x86_E5v2'
-        - 'x86_E5v2_IntelIB'
-        - 'x86_E5v3_IntelIB'
-        - 'x86_E5v4_Mellanox'
+      lapack: ['openblas@0.2.20~openmp']
     requires:
       - architecture
       - compiler
     specs:
-      - tensorflow~cuda
+      - cuda@8.0.44
+      - cudnn@5.1 ^cuda@8.0.44
+  'python::lapack+openmp':
+    target_matrix:
+      - gnu
+      - intel
+    target_filter:
+      lapack: ['openblas@0.2.20+openmp', 'mkl']
+    requires:
+      - architecture
+      - compiler
+      - python
+      - lapack
+    specs:
+      - py-numpy@1.13.1+blas+lapack
+      - py-scipy@0.19.1^py-numpy+blas+lapack@1.13.1
+      - py-matplotlib@2.0.2^py-numpy+blas+lapack@1.13.1

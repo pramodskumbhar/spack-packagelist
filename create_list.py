@@ -107,7 +107,7 @@ class ConfigurationFileParser(object):
                 parts = [base_spec]
                 parts.extend([v for v in item.values()])
                 spec = '^'.join(parts)
-                yield ' '.join((architecture, compiler, spec))
+                yield ' '.join((spec, '%'+compiler, 'arch='+architecture))
 
     def items(self):
         for name, value in self.packages.iteritems():
@@ -148,7 +148,10 @@ configuration = yaml.load(args.input)
 
 lines = []
 for item in ConfigurationFileParser(configuration, args.only).items():
-    lines.append(item)
+    if item.startswith("#"):
+        lines.append(item)
+    else:
+        lines.append('spack install -v ' + item)
     print(item)
 
 args.output.write('\n'.join(lines))
