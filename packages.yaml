@@ -18,12 +18,19 @@ combinations:
       - 'linux-rhel6-x86_64'
     compiler: 'gcc@5.3.0'
     mpi:
-      - 'openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm:mvapich2@2.2b+slurm:mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple'
+      - 'openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm:mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple:mpich@3.2+hydra+pmi+romio~verbs'
+    lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
+    python: 'python@3.5.2:python@2.7.13'
+  gnu7:
+    architecture: 'linux-rhel6-x86_64'
+    compiler: 'gcc@7.2.0'
+    mpi:
+      - 'openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm:mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple:mpich@3.2+hydra+pmi+romio~verbs'
     lapack: 'openblas@0.2.20~openmp:openblas@0.2.20+openmp'
     python: 'python@3.5.2:python@2.7.13'
   intel:
     architecture: 'linux-rhel6-x86_64'
-    compiler: 'intel@17.0.0'
+    compiler: 'intel@17.0.4'
     mpi: 'intel-mpi@2017.3.196'
     lapack: 'intel-mkl'
     python: 'python@3.5.2:python@2.7.13'
@@ -56,26 +63,38 @@ packages:
       - cmake@3.8.2
       - cmake@3.1.0
       - lmod@7.4.11
-      - scala@2.20.6
-      - spark@2.1.0+hadoop
+      - scala@2.12.1
+      - allinea-forge
+      - glew
+      - gdb@7.12.1
+      - ninja
+      - git
+      - git-lfs
+      - bazel
+      - zeromq
+      - mercurial
+      - libxml2
   serial:
     target_matrix:
       - gnu
+      - gnu7
       - intel
     requires:
       - architecture
       - compiler
     specs:
       - valgrind@3.12.0~boost~mpi
-      - gdb@7.12.1
       - gsl@2.3
       - hdf5@1.8.16+szip~fortran~mpi
       - hdf5@1.10.1+szip~fortran~mpi
       - python@3.5.2
       - python@2.7.13
+      - spark@2.1.0+hadoop
+      - protobuf
   'serial::python':
     target_matrix:
       - gnu
+      - gnu7
       - intel
     requires:
       - architecture
@@ -101,6 +120,7 @@ packages:
     target_matrix:
       - gnu
       - intel
+      - pgi
     requires:
       - architecture
       - compiler
@@ -108,9 +128,12 @@ packages:
     specs:
       - boost@1.64.0+mpi+python^python@2.7.13
       - hdf5@1.8.16+mpi~cxx~fortran+szip
+      - adios+mpi
+      - paraview+mpi
   'mpi::libs::all':
     target_matrix:
       - gnu
+      - gnu7
       - intel
       - pgi
       - llvm
@@ -122,32 +145,25 @@ packages:
       - mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple ^libpciaccess%gcc
       - mpich@3.2+hydra+pmi+romio~verbs
       - intel-mpi@2017.3.196
-  'mpi::libs::pgi':
-    target_matrix:
-      - pgi
-    requires:
-      - architecture
-      - compiler
-    specs:
-      - openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm  ^hwloc%gcc
-      - mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple ^libpciaccess%gcc
-      - mpich@3.2+hydra+pmi+romio~verbs
-      - intel-mpi@2017.3.196
-  'mpi::gnu::intel::pgi':
+  'mpi::gnu::intel::pgi::papi':
     target_matrix:
       - gnu
+      - gnu7
       - intel
       - pgi
+      - llvm
     requires:
       - architecture
       - compiler
       - mpi
     specs:
-      - tau@2.26.3
-      - scorep@3.1
+      - tau@2.26.3+mpi
+      - scorep@3.1^papi%gcc
+      - ior
   'mpi::lapack::gnu':
     target_matrix:
       - gnu
+      - gnu7
     requires:
       - architecture
       - compiler
@@ -158,6 +174,7 @@ packages:
   'serial::lapack~openmp::gnu':
     target_matrix:
       - gnu
+      - gnu7
     target_filter:
       lapack: ['openblas@0.2.20~openmp']
     requires:
@@ -165,7 +182,8 @@ packages:
       - compiler
       - lapack
     specs:
-      - caffe ^hdf5@1.8.16+szip ^py-numpy+blas+lapack
+      - caffe+python ^hdf5@1.8.16+szip ^py-numpy+blas+lapack
+      - octave
   'mpi::lapack::intel':
     target_matrix:
       - intel
@@ -184,11 +202,10 @@ packages:
       - compiler
     specs:
       - cuda@7.5.18
-      - cudnn@5.1 ^cuda@7.5.18
-      - cudnn@6.0 ^cuda@7.5.18
   cuda8:
     target_matrix:
       - gnu
+      - gnu7
     target_filter:
       lapack: ['openblas@0.2.20~openmp']
     requires:
@@ -200,6 +217,7 @@ packages:
   'python::lapack+openmp':
     target_matrix:
       - gnu
+      - gnu7
       - intel
     target_filter:
       lapack: ['openblas@0.2.20+openmp', 'intel-mkl']

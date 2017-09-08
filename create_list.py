@@ -153,8 +153,15 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--output',
-    help='output file',
+    '--specoutput',
+    help='spec output file',
+    type=argparse.FileType('w'),
+    required=True
+)
+
+parser.add_argument(
+    '--installoutput',
+    help='install output file',
     type=argparse.FileType('w'),
     required=True
 )
@@ -168,12 +175,17 @@ parser.add_argument(
 args = parser.parse_args()
 configuration = yaml.load(args.input)
 
-lines = []
+spec_lines = []
+install_lines = []
+
 for item in ConfigurationFileParser(configuration, args.only).items():
     if item.startswith("#"):
-        lines.append(item)
+        spec_lines.append(item)
+        install_lines.append(item)
     else:
-        lines.append('spack install -v ' + item)
+        spec_lines.append('spack spec ' + item)
+        install_lines.append('spack install -v ' + item)
     print(item)
 
-args.output.write('\n'.join(lines))
+args.specoutput.write('\n'.join(spec_lines))
+args.installoutput.write('\n'.join(install_lines))
