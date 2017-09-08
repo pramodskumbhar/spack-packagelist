@@ -103,11 +103,33 @@ class ConfigurationFileParser(object):
         for item in targets:
             compiler = item.pop('compiler')
             architecture = item.pop('architecture')
+            compiler_added = False
+
             for base_spec in specs:
+                # rewrite spec if there is compiler specification in base_spec
+                if '%' in base_spec:
+                    space_pos = base_spec.find(' ')
+                    carret_pos = base_spec.find('^')
+
+                    if carret_pos == -1:
+                        error = ('Use of %s in \'%s\' without dependent spec is invalid! (duplicate compiler spec?)' % ('%', base_spec))
+                        raise RuntimeError(error)
+
+                    if space_pos < 0:
+                        space_pos = 99999
+
+                    replace_string = ('^' if (carret_pos < space_pos) else ' ')
+                    base_spec = base_spec.replace(replace_string, "%s%s%s" % ("%", compiler, replace_string), 1)
+                    compiler_added = True
+
                 parts = [base_spec]
                 parts.extend([v for v in item.values()])
                 spec = '^'.join(parts)
-                yield ' '.join((spec, '%'+compiler, 'arch='+architecture))
+
+                if compiler_added:
+                    yield ' '.join((spec, 'arch='+architecture))
+                else:
+                    yield ' '.join((spec, '%'+compiler, 'arch='+architecture))
 
     def items(self):
         for name, value in self.packages.iteritems():
