@@ -62,18 +62,26 @@ packages:
     specs:
       - cmake@3.8.2
       - cmake@3.1.0
+      - git
+      - git-lfs
       - lmod@7.4.11
       - scala@2.12.1
       - allinea-forge
       - glew
       - gdb@7.12.1
       - ninja
-      - git
-      - git-lfs
-      - bazel
-      - zeromq
       - mercurial
       - libxml2
+  gnu5:
+    target_matrix:
+      - gnu
+    requires:
+      - architecture
+      - compiler
+    specs:
+      - bazel
+      - protobuf
+      - boost@1.64.0+python^python@2.7.13
   serial:
     target_matrix:
       - gnu
@@ -90,7 +98,9 @@ packages:
       - python@3.5.2
       - python@2.7.13
       - spark@2.1.0+hadoop
-      - protobuf
+      - zeromq
+      - boost@1.57.0
+      - boost@1.63.0
   'serial::python':
     target_matrix:
       - gnu
@@ -116,6 +126,17 @@ packages:
     specs:
       - qt@4.8.6
       - qt@5.8.0
+      - cube+gui
+  'mpi::gnu':
+    target_matrix:
+      - gnu
+    requires:
+      - architecture
+      - compiler
+      - mpi
+    specs:
+      - adios+mpi
+      - paraview+mpi
   'mpi::gnu::intel':
     target_matrix:
       - gnu
@@ -126,10 +147,7 @@ packages:
       - compiler
       - mpi
     specs:
-      - boost@1.64.0+mpi+python^python@2.7.13
       - hdf5@1.8.16+mpi~cxx~fortran+szip
-      - adios+mpi
-      - paraview+mpi
   'mpi::libs::all':
     target_matrix:
       - gnu
@@ -145,7 +163,7 @@ packages:
       - mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple ^libpciaccess%gcc
       - mpich@3.2+hydra+pmi+romio~verbs
       - intel-mpi@2017.3.196
-  'mpi::gnu::intel::pgi::papi':
+  'mpi::gnu::intel::pgi::llvm':
     target_matrix:
       - gnu
       - gnu7
@@ -158,8 +176,19 @@ packages:
       - mpi
     specs:
       - tau@2.26.3+mpi
-      - scorep@3.1^papi%gcc
       - ior
+  # no pgi fortran license
+  'mpi::gnu::intel::llvm':
+    target_matrix:
+      - gnu
+      - gnu7
+      - intel
+    requires:
+      - architecture
+      - compiler
+      - mpi
+    specs:
+      - scorep@3.1^papi%gcc^cube%gcc
   'mpi::lapack::gnu':
     target_matrix:
       - gnu
@@ -182,11 +211,10 @@ packages:
       - compiler
       - lapack
     specs:
-      - caffe+python ^hdf5@1.8.16+szip ^py-numpy+blas+lapack
       - octave
-  'mpi::lapack::intel':
+  'mpi::lapack::gnu':
     target_matrix:
-      - intel
+      - gnu
     requires:
       - architecture
       - compiler
@@ -217,7 +245,6 @@ packages:
   'python::lapack+openmp':
     target_matrix:
       - gnu
-      - gnu7
       - intel
     target_filter:
       lapack: ['openblas@0.2.20+openmp', 'intel-mkl']
@@ -229,4 +256,16 @@ packages:
     specs:
       - py-numpy@1.13.1+blas+lapack
       - py-scipy@0.19.1^py-numpy+blas+lapack@1.13.1
-      - py-matplotlib@2.0.2^py-numpy+blas+lapack@1.13.1
+      - py-matplotlib@2.0.2+image^py-numpy+blas+lapack@1.13.1^py-pillow^binutils%gcc
+  'python::gnu::lapack+openmp':
+    target_matrix:
+      - gnu
+    target_filter:
+      lapack: ['openblas@0.2.20+openmp']
+    requires:
+      - architecture
+      - compiler
+      - python
+      - lapack
+    specs:
+      -  caffe+python~leveldb~opencv+cuda ^hdf5@1.8.16+szip~mpi ^py-numpy+blas+lapack ^cuda@8.0.44

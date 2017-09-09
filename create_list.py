@@ -103,9 +103,10 @@ class ConfigurationFileParser(object):
         for item in targets:
             compiler = item.pop('compiler')
             architecture = item.pop('architecture')
-            compiler_added = False
 
             for base_spec in specs:
+                compiler_added = False
+
                 # rewrite spec if there is compiler specification in base_spec
                 if '%' in base_spec:
                     space_pos = base_spec.find(' ')
