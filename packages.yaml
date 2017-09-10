@@ -66,7 +66,6 @@ packages:
       - git-lfs
       - lmod@7.4.11
       - scala@2.12.1
-      - allinea-forge
       - glew
       - gdb@7.12.1
       - ninja
@@ -82,6 +81,12 @@ packages:
       - bazel
       - protobuf
       - boost@1.64.0+python^python@2.7.13
+      - darshan-util
+      - iozone
+      - raja
+      - allinea-forge
+      - valgrind@3.12.0~boost~mpi
+      - zeromq
   serial:
     target_matrix:
       - gnu
@@ -91,14 +96,12 @@ packages:
       - architecture
       - compiler
     specs:
-      - valgrind@3.12.0~boost~mpi
       - gsl@2.3
       - hdf5@1.8.16+szip~fortran~mpi
       - hdf5@1.10.1+szip~fortran~mpi
       - python@3.5.2
       - python@2.7.13
       - spark@2.1.0+hadoop
-      - zeromq
       - boost@1.57.0
       - boost@1.63.0
   'serial::python':
@@ -189,6 +192,17 @@ packages:
       - mpi
     specs:
       - scorep@3.1^papi%gcc^cube%gcc
+  'mpi::gnu::intel':
+    target_matrix:
+      - gnu
+      - intel
+    requires:
+      - architecture
+      - compiler
+      - mpi
+    specs:
+      - hpctoolkit+mpi ^hpctoolkit%gcc
+      - darshan-runtime
   'mpi::lapack::gnu':
     target_matrix:
       - gnu
@@ -257,6 +271,8 @@ packages:
       - py-numpy@1.13.1+blas+lapack
       - py-scipy@0.19.1^py-numpy+blas+lapack@1.13.1
       - py-matplotlib@2.0.2+image^py-numpy+blas+lapack@1.13.1^py-pillow^binutils%gcc
+      - py-theano+gpu ^py-numpy+blas+lapack@1.13.1 ^cuda@8.0.44 ^libgpuarray^cmake%gcc
+      - py-theano ^py-numpy+blas+lapack@1.13.1
   'python::gnu::lapack+openmp':
     target_matrix:
       - gnu
