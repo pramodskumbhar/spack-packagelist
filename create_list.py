@@ -185,7 +185,7 @@ for item in ConfigurationFileParser(configuration, args.only).items():
         install_lines.append(item)
     else:
         spec_lines.append('spack spec ' + item)
-        install_lines.append('spack install -v ' + item)
+        install_lines.append('spack install ' + item)
     print(item)
 
 args.specoutput.write('\n'.join(spec_lines))
