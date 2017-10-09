@@ -56,7 +56,7 @@ class ConfigurationFileParser(object):
             # Turn a dict of lists into a list of list of tuples
             item = []
             for key, l in intermediate.items():
-                item.append([(key, value) for value in l])
+                item.append([(key, value.strip()) for value in l])
             # Now itertools.product to the rescue
             for entry in itertools.product(*item):
                 combinations.append(dict(entry))
@@ -184,8 +184,9 @@ for item in ConfigurationFileParser(configuration, args.only).items():
         spec_lines.append(item)
         install_lines.append(item)
     else:
-        spec_lines.append('spack spec ' + item)
-        install_lines.append('spack install ' + item)
+        spec_lines.append('spack spec -I ' + item)
+        install_lines.append('spack spec -I ' + item)
+        install_lines.append('spack install --show-log-on-error --log-format=junit ' + item)
     print(item)
 
 args.specoutput.write('\n'.join(spec_lines))
