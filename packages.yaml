@@ -11,60 +11,60 @@ combinations:
 
   gnu48:
     architecture:
-    - linux-rhel6-x86_64
+    - linux-rhel7-x86_64
     compiler:
-    - gcc@4.8.4
+    - gcc@4.8.5
     mpi: None
     lapack: None
     python: None
 
-  gnu53:
+  gnu62:
     architecture:
-      - linux-rhel6-x86_64
+      - linux-rhel7-x86_64
     compiler:
-      - gcc@5.3.0
+      - gcc@6.2.0
     mpi:
-      - 'openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm : mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple : mpich@3.2+hydra+pmi+romio~verbs'
+      - 'mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple'
     lapack:
       - 'openblas@0.2.20~openmp : openblas@0.2.20+openmp'
     python:
-      - 'python@3.5.2 : python@2.7.13'
+      - 'python@3.6.3 : python@2.7.14'
 
-  intel17:
+  intel18:
     architecture:
-      - linux-rhel6-x86_64
+      - linux-rhel7-x86_64
     compiler:
-      - intel@17.0.4
+      - intel@18.0.1
     mpi:
-      - intel-mpi@2017.3.196
+      - intel-mpi@2018.1.163
     lapack:
       - 'intel-mkl+openmp : intel-mkl~openmp'
     python:
-      - python@3.5.2:python@2.7.13
+      - python@3.6.3:python@2.7.14
 
   pgi17:
     architecture:
-      - linux-rhel6-x86_64
+      - linux-rhel7-x86_64
     compiler:
-      - pgi@17.4
+      - pgi@17.10
     mpi:
-      - mpich@3.2+hydra+pmi+romio~verbs
+      - 'mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple'
     lapack: None
     python: None
 
   llvm4:
     architecture:
-      - linux-rhel6-x86_64
+      - linux-rhel7-x86_64
     compiler:
       - clang@4.0.1
     mpi:
-      - mpich@3.2+hydra+pmi+romio~verbs
+      - 'mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple'
     lapack: None
     python: None
 
   gnu72:
     architecture:
-      - linux-rhel6-x86_64
+      - linux-rhel7-x86_64
     compiler:
       - gcc@7.2.0
     mpi: None
@@ -82,107 +82,52 @@ packages:
     specs:
       - cmake@3.8.2
       - cmake@3.1.0
-      - git
-      - git-lfs
-      - lmod@7.4.11
       - scala@2.12.1
-      - glew
-      - gdb@7.12.1
-      - ninja
-      - mercurial
-      - bazel
       - darshan-util
       - allinea-forge
-      - valgrind@3.12.0~boost~mpi
+      - valgrind@3.13.0~boost~mpi
+      - antlr
 
   gnu-packages:
     target_matrix:
-      - gnu53
+      - gnu62
     requires:
       - architecture
       - compiler
     specs:
       - boost@1.57.0~mpi~python
-      - boost@1.63.0~mpi~python
-      - boost@1.64.0+python^python@2.7.13
-      - protobuf
-      - python@2.7.13
-      - python@3.5.2
+      - boost@1.66.0+python^python@2.7.14
+      - python@2.7.14
+      - python@3.6.3
       - libxml2
       - zlib
       - zeromq
       - qt@4.8.6
-      - qt@5.8.0
+      - qt@5.10.0
       - cube+gui
-      - gsl@2.3
-      - spark@2.2.0~hadoop
-      - spark@2.1.0~hadoop
       - spark@2.2.0+hadoop
-      - spark@2.1.0+hadoop
       - iozone
-
-  gnu-python-packages:
-    target_matrix:
-      - gnu53
-    requires:
-      - architecture
-      - compiler
-      - python
-    specs:
-      - py-argparse
-      - py-beautifulsoup4
-      - py-cython
-      - py-cpuinfo
-      - py-elasticsearch
-      - py-elephant
-      - py-flake8
-      - py-h5py
-      - py-matplotlib
-      - py-multiprocess
-      - py-neo
-      - py-nose
-      - py-pillow
-      - py-pip
-      - py-ply
-      - py-pytest
-      - py-pyyaml
-      - py-setuptools
-      - py-six
-      - py-sphinx
-      - py-sympy
-      - py-virtualenv
-      - py-zmq
-
-  gnu-python27-packages:
-    target_matrix:
-      - gnu53
-    requires:
-      - architecture
-      - compiler
-      - python
-    target_filter:
-      python: ['python@2.7.13']
-    specs:
-      - py-jupyter-client
-      - py-jupyter-console
-      - py-jupyter-core
-      - py-ipython
-      - py-jupyter-notebook
+      - ompt-openmp
+      - ravel
+      - raja
+      - kokkos
 
   gnu-mpi-packages:
     target_matrix:
-      - gnu53
+      - gnu62
     requires:
       - architecture
       - compiler
       - mpi
     specs:
       - adios+mpi
+      - adios2+mpi
       - paraview+mpi
+      - stat
 
   gnu-mpi-lapack:
     target_matrix:
-      - gnu53
+      - gnu62
     requires:
       - architecture
       - compiler
@@ -193,7 +138,7 @@ packages:
 
   gnu-lapack-serial:
     target_matrix:
-      - gnu53
+      - gnu62
     target_filter:
       lapack: ['openblas@0.2.20~openmp']
     requires:
@@ -205,7 +150,7 @@ packages:
 
   gnu-petsc-mpi-lapack:
     target_matrix:
-      - gnu53
+      - gnu62
     requires:
       - architecture
       - compiler
@@ -213,32 +158,33 @@ packages:
       - lapack
     specs:
       - petsc@3.6.3+boost+double+hdf5+metis+mpi+mumps~superlu-dist~hypre
+      - openspeedshop+mvapich2
 
   gnu-cuda-packages:
     target_matrix:
-      - gnu53
+      - gnu62
     requires:
       - architecture
       - compiler
     specs:
-      - cuda@7.5.18
+      - cuda@9.1.85
       - cuda@8.0.61
       - cuda@6.5.14
 
   gnu-cudnn:
     target_matrix:
-      - gnu53
+      - gnu62
     requires:
       - architecture
       - compiler
     specs:
+      - cudnn@6.0 ^cuda@9.1.85
       - cudnn@6.0 ^cuda@8.0.44
-      - cudnn@5.1 ^cuda@8.0.44
 
   mpi-per-compiler:
     target_matrix:
-      - gnu53
-      - intel17
+      - gnu62
+      - intel18
       - pgi17
     requires:
       - architecture
@@ -246,26 +192,25 @@ packages:
       - mpi
     specs:
       - hdf5@1.8.16+mpi~cxx~fortran+szip
+      - hdf5@1.10.1+mpi~cxx~fortran+szip
 
   mpi-libs-per-compiler:
     target_matrix:
-      - gnu53
-      - intel17
+      - gnu62
+      - intel18
       - pgi17
       - llvm4
     requires:
       - architecture
       - compiler
     specs:
-      - openmpi@2.1.1+thread_multiple~cuda fabrics=verbs schedulers=slurm ^hwloc%gcc
       - mvapich2@2.2~cuda fabrics=mrail process_managers=slurm threads=multiple ^libpciaccess%gcc
-      - mpich@3.2+hydra+pmi+romio~verbs
-      - intel-mpi@2017.3.196
+      - intel-mpi@2018.1.163
 
   perftools-per-compiler:
     target_matrix:
-      - gnu53
-      - intel17
+      - gnu62
+      - intel18
       - pgi17
       - llvm4
     requires:
@@ -274,14 +219,13 @@ packages:
       - mpi
     specs:
       - tau@2.26.3+mpi
-      - ior@3.0.1
       - darshan-runtime@3.1.0
 
   # no pgi fortran license at bbp
   extra-perftools-per-compiler:
     target_matrix:
-      - gnu53
-      - intel17
+      - gnu62
+      - intel18
     requires:
       - architecture
       - compiler
@@ -289,11 +233,15 @@ packages:
     specs:
       - scorep@3.1^papi%gcc^cube%gcc
       - hpctoolkit@master+mpi ^hpctoolkit-externals@masters%gcc
+      - caliper
+      - extrae
+      - mpileaks
+      - mpip
 
   python-scientific-lapack:
     target_matrix:
-      - gnu53
-      - intel17
+      - gnu62
+      - intel18
     target_filter:
       lapack: ['openblas@0.2.20+openmp', 'openblas@0.2.20~openmp', 'intel-mkl+openmp']
     requires:
@@ -302,20 +250,5 @@ packages:
       - python
       - lapack
     specs:
-      - py-numpy@1.13.1+blas+lapack
-      - py-scipy@0.19.1^py-numpy+blas+lapack@1.13.1
-      - py-theano+gpu ^py-numpy+blas+lapack@1.13.1 ^cuda@8.0.44 ^libgpuarray^cmake%gcc
-      - py-theano ^py-numpy+blas+lapack@1.13.1
-
-  python-caffe-gnu:
-    target_matrix:
-      - gnu53
-    target_filter:
-      lapack: ['openblas@0.2.20+openmp']
-    requires:
-      - architecture
-      - compiler
-      - python
-      - lapack
-    specs:
-      - caffe+python~leveldb~opencv+cuda ^hdf5@1.8.16+szip~mpi ^py-numpy+blas+lapack ^cuda@7.5.18
+      - py-numpy@1.13.3+blas+lapack
+      - py-scipy@1.0.0^py-numpy+blas+lapack@1.13.3
